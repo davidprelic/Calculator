@@ -30,10 +30,9 @@ function operate(operator, num1, num2) {
 
 const screen = document.querySelector("#cont");
 
-
-let num1 = '';
-let num2 = '';
-let ope = '';
+let nums = [];
+let opers = [];
+let num = "";
 
 const btns = document.querySelectorAll("button");
 
@@ -41,29 +40,45 @@ btns.forEach((currBtn) => {
    currBtn.addEventListener('click', () => {
       if(screen.textContent === "") {
          if(['1','2','3','4','5','6','7','8','9','0'].includes(currBtn.textContent)) {
-            num1 = currBtn.textContent;
+            num = currBtn.textContent;
             screen.textContent = currBtn.textContent;
          }
       }
       else if(screen.textContent !== "" && ['+','-','*','/'].includes(currBtn.textContent)) {
-         ope = currBtn.textContent;
-         screen.textContent += ope;
+         if(num !== "") {
+            nums.push(Number(num));
+            num = "";
+         }
+         if(opers.length < nums.length) {
+            opers.push(currBtn.textContent);
+            screen.textContent += currBtn.textContent;
+         }
       }
-      else if(screen.textContent !== "" && ope === "" && ['1','2','3','4','5','6','7','8','9','0'].includes(currBtn.textContent)) {
-         num1 += currBtn.textContent;
-         screen.textContent = num1;
-      }
-      
-      else if(screen.textContent !== "" && ope !== "" && ['1','2','3','4','5','6','7','8','9','0'].includes(currBtn.textContent)) { 
-         num2 += currBtn.textContent;
+      else if(screen.textContent !== "" && ['1','2','3','4','5','6','7','8','9','0'].includes(currBtn.textContent)) { 
+         num += currBtn.textContent;
          screen.textContent += currBtn.textContent;    
       }
+      
      
       else if(currBtn.textContent === "=") {
-         let a = Number(num1);
-         let b = Number(num2);
-    
-         screen.textContent = '' + operate(ope, a, b);
+         nums.push(Number(num));
+      
+         let i;
+         let res = Number(operate(opers[0], nums[0], nums[1]));
+         for(i = 1; i < opers.length; i++) {
+            res = Number(operate(opers[i], res, nums[i+1]));
+         }
+         
+         screen.textContent = '' + res;
+         nums = [];
+         opers = [];
+         num = "";
+         nums.push(res);
+      }
+      else if(currBtn.textContent === "clear") {
+         nums = [];
+         opers = [];
+         screen.textContent = "";
       }
        
    });
